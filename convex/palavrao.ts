@@ -14,7 +14,8 @@ export const send = mutation({
 
         await ctx.db.insert("palavroes", {
             text: args.text,
-            user_name: user.name,
+            usuario: user.tokenIdentifier,
+            nome_usuario: user.name,
             votes: 1
         })
     }
