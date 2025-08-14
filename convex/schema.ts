@@ -10,5 +10,5 @@ export default defineSchema({
     votos: defineTable({
         palavrao: v.id("palavroes"),
         usuario: v.string() // email do usuário
-    })
+    }).index("by_user", ["usuario"])
 });
