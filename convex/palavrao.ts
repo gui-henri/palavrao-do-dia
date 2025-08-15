@@ -1,5 +1,6 @@
-import { v } from "convex/values";
+import { ConvexError, v } from "convex/values";
 import { mutation, query } from "./_generated/server";
+import { paginationOptsValidator } from "convex/server";
 
 export const send = mutation({
     args: {
@@ -7,17 +8,64 @@ export const send = mutation({
     },
     handler: async (ctx, args) => {
         const user = await ctx.auth.getUserIdentity();
+        const SUGGESTION_NUMBER = 1;
 
         if (user === null || user.name === undefined) {
-            throw new Error("Not Authenticated");
+            throw new ConvexError("Faz login primeiro caralho.");
+        }
+
+        if (args.text === "") {
+            throw new ConvexError("Digita algo pra mandar primeiro.");
+        }
+
+        if (args.text.length > 100) {
+            throw new ConvexError("Deu a porra, digita menos.");
+        }
+
+        const date = getDayBucket(Date.now());
+
+        const lastSugestion = await ctx.db
+            .query("palavroes")
+            .withIndex("by_day_and_user", (q) => q
+                .eq("dia", date)
+                .eq("usuario", user.tokenIdentifier)
+            ).order("desc")
+            .take(SUGGESTION_NUMBER);
+
+        if (lastSugestion.length >= SUGGESTION_NUMBER) {
+            throw new ConvexError("Já sugeriu demais hoje, volte amanhã as 15hrs");
+        }
+
+        const palavraoJaSugerido = await ctx.db
+            .query("palavroes")
+            .withIndex("by_day_and_text", (doc) => doc
+                .eq("dia", date)
+                .eq("text", args.text))
+            .first();
+
+        if (palavraoJaSugerido !== null) {
+            throw new ConvexError("Já mandaram esse aí hoje. Só amanhã agora.")
         }
 
         await ctx.db.insert("palavroes", {
             text: args.text,
             usuario: user.tokenIdentifier,
             nome_usuario: user.name,
-            votes: 1
+            votes: 0,
+            dia: getDayBucket(Date.now())
         })
+    }
+});
+
+export const palavraoDiario = query({
+    handler: async (ctx) => {
+        const date = getDayBucket(Date.now() - 60000 * 60 * 24);
+        const palavraoMaisVotado = await ctx.db
+            .query("palavroes")
+            .withIndex("by_day_and_votes", (doc) => doc.eq("dia", date))
+            .order("desc")
+            .first();
+        return palavraoMaisVotado;
     }
 });
 
@@ -30,44 +78,35 @@ export const voteUp = mutation({
         const VOTE_NUMBER = 1;
 
         if (user === null || user.email === undefined) {
-            throw new Error("Not Authenticated");
+            throw new ConvexError("Voto anônimo é o caralho, faça login seu porra.");
         }
+        const date = getDayBucket(Date.now());
 
         const lastVotes = await ctx.db
             .query("votos")
-            .withIndex("by_user", (q) => q
+            .withIndex("by_day_and_user", (q) => q
+                .eq("dia", date)
                 .eq("usuario", user.tokenIdentifier)
-                .gt("_creationTime", Date.now() - 60000 * 60 * 24) // 24hrs from now
             ).order("desc")
             .take(VOTE_NUMBER);
 
         if (lastVotes.length >= VOTE_NUMBER) {
-            const lastVote = lastVotes[0];
-            const now = Date.now();
-            const nextVoteTime = lastVote._creationTime + 60000 * 60 * 24; // 24 horas após o último voto
-            const timeLeft = new Date(nextVoteTime - now);
-            const hours = timeLeft.getHours();
-
-            let errorStr = "";
-            if (hours > 1) {
-                errorStr = `Voted too much, come back in ${hours} hours`;
-            } else if (hours === 1) {
-                errorStr = `Voted too much, come back in ${hours} hour`;
-            } else {
-                const minutes = timeLeft.getMinutes();
-                errorStr = `Voted too much, come back in ${minutes} minutes`;
-            }
-            throw new Error(errorStr);
+            throw new ConvexError("Já votou demais cacete. Volta amanhã de 15hrs.");
         }
 
         const palavrao = await ctx.db.get(args.palavrao);
         if (palavrao === null || palavrao.votes === undefined) {
-            throw new Error("Vote not set or cuss word doesn't exist");
+            throw new ConvexError("Palavrão não existe.");
+        }
+
+        if (palavrao.usuario === user.tokenIdentifier) {
+            throw new ConvexError("Não pode votar em tu mesmo fera.");
         }
 
         await ctx.db.insert("votos", {
             palavrao: palavrao._id,
-            usuario: user.tokenIdentifier
+            usuario: user.tokenIdentifier,
+            dia: date
         });
 
         await ctx.db.patch(args.palavrao, {
@@ -76,10 +115,33 @@ export const voteUp = mutation({
     }
 });
 
-export const list = query({
+const getDayBucket = (timestamp: number): string => {
+    const date = new Date(timestamp);
+    const cutoffHour = 15;
 
-    handler: async (ctx) => {
-        const tasks = await ctx.db.query("palavroes").collect();
-        return tasks;
+    if (date.getHours() < cutoffHour) {
+        date.setDate(date.getDate() - 1);
+    }
+
+    return date.toISOString().slice(0, 10);
+};
+
+export const list = query({
+    args: {
+        paginationOpts: paginationOptsValidator
+    },
+    handler: async (ctx, args) => {
+        const date = getDayBucket(Date.now());
+        if (args.paginationOpts.numItems > 20) {
+            args.paginationOpts.numItems = 20;
+        }
+        const palavroes = await ctx.db
+            .query("palavroes")
+            .withIndex("by_day_and_votes",
+                (doc) => doc
+                    .eq("dia", date)
+            ).order("desc")
+            .paginate(args.paginationOpts);
+        return palavroes;
     },
 });

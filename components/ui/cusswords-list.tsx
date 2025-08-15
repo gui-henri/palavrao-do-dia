@@ -1,24 +1,39 @@
 "use client"
-import { useMutation, useQuery } from "convex/react";
+import { useMutation, usePaginatedQuery } from "convex/react";
 import { api } from "../../convex/_generated/api";
 import { ThumbsUp } from "lucide-react";
+import { Button } from "./button";
+import { toast } from "sonner";
+import { ConvexError } from "convex/values";
 
 export function CussWordsList() {
-    const palavroes = useQuery(api.palavrao.list);
+    const { results, status, loadMore } = usePaginatedQuery(
+        api.palavrao.list,
+        {},
+        { initialNumItems: 20 });
     const sendLike = useMutation(api.palavrao.voteUp);
 
     return (
         <div>
-            {palavroes?.map(({ _id, text, votes }) => {
+            {results?.map(({ _id, text, votes }) => {
                 return (
                     <div key={_id} className="flex p-2 gap-2 ">
                         {text},
-                        <button className="flex gap-1 cursor-pointer" onClick={() => sendLike({ palavrao: _id })}>
+                        <button className="flex gap-1 cursor-pointer" onClick={async () => {
+                            try {
+                                await sendLike({ palavrao: _id })
+                            } catch (error) {
+                                if (error instanceof ConvexError) {
+                                    toast.error(error.data);
+                                }
+                            }
+                        }}>
                             <ThumbsUp /> {votes}
                         </button>
                     </div>
                 )
             })}
+            <Button className="cursor-pointer" onClick={() => loadMore(20)} disabled={status !== "CanLoadMore"}>Carregar Mais</Button>
         </div >
     )
 }

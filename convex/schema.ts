@@ -6,11 +6,17 @@ export default defineSchema({
         text: v.string(),
         usuario: v.string(),
         nome_usuario: v.string(),
-        votes: v.number()
+        votes: v.number(),
+        dia: v.string(),
     }).index("by_text", ["text"])
-        .index("by_user", ["usuario"]),
+        .index("by_user", ["usuario"])
+        .index("by_day_and_votes", ["dia", "votes"])
+        .index("by_day_and_text", ["dia", "text"])
+        .index("by_day_and_user", ["dia", "usuario"]),
     votos: defineTable({
         palavrao: v.id("palavroes"),
-        usuario: v.string() // email do usuário
+        usuario: v.string(),
+        dia: v.string(),
     }).index("by_user", ["usuario"])
+        .index("by_day_and_user", ["dia", "usuario"])
 });
