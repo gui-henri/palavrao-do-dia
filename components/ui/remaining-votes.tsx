@@ -6,7 +6,7 @@ import { useQuery } from "convex/react"
 export function RemainingVotes() {
     const remainingVotes = useQuery(api.votos.remainingVotes);
 
-    if (remainingVotes === "NotLoggedIn" || undefined) {
+    if (remainingVotes === "NotLoggedIn" || remainingVotes === undefined) {
         return (
             <p>Faça login para poder votar.</p>
         )
