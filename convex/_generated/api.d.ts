@@ -13,7 +13,10 @@ import type {
   FilterApi,
   FunctionReference,
 } from "convex/server";
+import type * as consts from "../consts.js";
+import type * as entity_day from "../entity/day.js";
 import type * as palavrao from "../palavrao.js";
+import type * as votos from "../votos.js";
 
 /**
  * A utility for referencing Convex functions in your app's API.
@@ -24,7 +27,10 @@ import type * as palavrao from "../palavrao.js";
  * ```
  */
 declare const fullApi: ApiFromModules<{
+  consts: typeof consts;
+  "entity/day": typeof entity_day;
   palavrao: typeof palavrao;
+  votos: typeof votos;
 }>;
 export declare const api: FilterApi<
   typeof fullApi,

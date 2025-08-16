@@ -1,6 +1,7 @@
 import { CussWordOfTheDay } from "@/components/ui/cussword-day";
 import { CussWordsList } from "@/components/ui/cusswords-list";
 import { Login } from "@/components/ui/login";
+import { RemainingVotes } from "@/components/ui/remaining-votes";
 import { SendForm } from "@/components/ui/send-form";
 
 export default function Home() {
@@ -9,7 +10,7 @@ export default function Home() {
       <Login />
       <CussWordOfTheDay />
       <SendForm />
-      <p>Apenas um voto por dia. Use com sabedoria.</p>
+      <RemainingVotes />
       <CussWordsList />
     </div>
   );

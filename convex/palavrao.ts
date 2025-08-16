@@ -2,17 +2,8 @@ import { ConvexError, v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 import { paginationOptsValidator } from "convex/server";
 import { Id } from "./_generated/dataModel";
-
-const getDayBucket = (timestamp: number): string => {
-    const date = new Date(timestamp);
-    const cutoffHour = 15;
-
-    if (date.getHours() < cutoffHour) {
-        date.setDate(date.getDate() - 1);
-    }
-
-    return date.toISOString().slice(0, 10);
-};
+import { getDayBucket } from "./entity/day";
+import { SUGGESTION_NUMBER, VOTE_NUMBER } from "./consts";
 
 export const send = mutation({
     args: {
@@ -20,7 +11,6 @@ export const send = mutation({
     },
     handler: async (ctx, args) => {
         const user = await ctx.auth.getUserIdentity();
-        const SUGGESTION_NUMBER = 1;
 
         if (user === null || user.name === undefined) {
             throw new ConvexError("Faz login primeiro caralho.");
@@ -87,14 +77,13 @@ export const voteUp = mutation({
     },
     handler: async (ctx, args) => {
         const user = await ctx.auth.getUserIdentity();
-        const VOTE_NUMBER = 1;
 
         if (user === null || user.email === undefined) {
             throw new ConvexError("Voto anônimo é o caralho, faça login seu porra.");
         }
         const date = getDayBucket(Date.now());
 
-        const lastVotes = await ctx.db
+        const lastVotesPromisse = ctx.db
             .query("votos")
             .withIndex("by_day_and_user", (q) => q
                 .eq("dia", date)
@@ -102,17 +91,26 @@ export const voteUp = mutation({
             ).order("desc")
             .take(VOTE_NUMBER);
 
-        if (lastVotes.length >= VOTE_NUMBER) {
-            throw new ConvexError("Já votou demais cacete. Volta amanhã de 15hrs.");
-        }
+        const palavraoPromisse = ctx.db.get(args.palavrao);
 
-        const palavrao = await ctx.db.get(args.palavrao);
+        const [palavrao, lastVotes] = await Promise.all([palavraoPromisse, lastVotesPromisse]);
+
         if (palavrao === null || palavrao.votes === undefined) {
             throw new ConvexError("Palavrão não existe.");
         }
 
+        if (lastVotes.length >= VOTE_NUMBER) {
+            throw new ConvexError("Já votou demais cacete. Volta amanhã de 15hrs.");
+        }
+
         if (palavrao.usuario === user.tokenIdentifier) {
             throw new ConvexError("Não pode votar em tu mesmo fera.");
+        }
+
+        const votoDuplicado = lastVotes.filter((p) => p.palavrao === palavrao._id);
+
+        if (votoDuplicado.length > 0) {
+            throw new ConvexError("Já votou nesse ô arrombado.");
         }
 
         await ctx.db.insert("votos", {
