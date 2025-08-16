@@ -1,6 +1,18 @@
 import { ConvexError, v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 import { paginationOptsValidator } from "convex/server";
+import { Id } from "./_generated/dataModel";
+
+const getDayBucket = (timestamp: number): string => {
+    const date = new Date(timestamp);
+    const cutoffHour = 15;
+
+    if (date.getHours() < cutoffHour) {
+        date.setDate(date.getDate() - 1);
+    }
+
+    return date.toISOString().slice(0, 10);
+};
 
 export const send = mutation({
     args: {
@@ -115,17 +127,6 @@ export const voteUp = mutation({
     }
 });
 
-const getDayBucket = (timestamp: number): string => {
-    const date = new Date(timestamp);
-    const cutoffHour = 15;
-
-    if (date.getHours() < cutoffHour) {
-        date.setDate(date.getDate() - 1);
-    }
-
-    return date.toISOString().slice(0, 10);
-};
-
 export const list = query({
     args: {
         paginationOpts: paginationOptsValidator
@@ -135,13 +136,46 @@ export const list = query({
         if (args.paginationOpts.numItems > 20) {
             args.paginationOpts.numItems = 20;
         }
-        const palavroes = await ctx.db
+
+        const user = await ctx.auth.getUserIdentity();
+
+        const palavroesPromisse = ctx.db
             .query("palavroes")
             .withIndex("by_day_and_votes",
                 (doc) => doc
                     .eq("dia", date)
             ).order("desc")
             .paginate(args.paginationOpts);
-        return palavroes;
+
+        let userVotesPromisse: Promise<{
+            _id: Id<"votos">;
+            _creationTime: number;
+            usuario: string;
+            dia: string;
+            palavrao: Id<"palavroes">;
+        }[]> | null = null;
+
+        if (user) {
+            userVotesPromisse = ctx.db
+                .query("votos")
+                .withIndex("by_day_and_user", (doc) => doc
+                    .eq("dia", getDayBucket(Date.now()))
+                    .eq("usuario", user?.tokenIdentifier))
+                .collect();
+        }
+
+        const [palavroes, userVotes] = await Promise.all([palavroesPromisse, userVotesPromisse]);
+
+        const voteIds = new Set(
+            userVotes?.map((vote) => vote.palavrao) ?? []
+        )
+
+        return {
+            ...palavroes,
+            page: palavroes.page.map((palavrao) => ({
+                ...palavrao,
+                votedByUser: voteIds.has(palavrao._id),
+            }))
+        }
     },
 });

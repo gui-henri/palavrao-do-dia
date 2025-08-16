@@ -15,7 +15,7 @@ export function CussWordsList() {
 
     return (
         <div>
-            {results?.map(({ _id, text, votes }) => {
+            {results?.map(({ _id, text, votes, votedByUser }) => {
                 return (
                     <div key={_id} className="flex p-2 gap-2 ">
                         {text},
@@ -28,7 +28,7 @@ export function CussWordsList() {
                                 }
                             }
                         }}>
-                            <ThumbsUp /> {votes}
+                            <ThumbsUp fill={votedByUser ? "white" : ""} /> {votes}
                         </button>
                     </div>
                 )
