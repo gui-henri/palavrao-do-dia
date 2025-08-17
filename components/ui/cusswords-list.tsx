@@ -18,7 +18,7 @@ export function CussWordsList() {
     return (
         <div>
             <LoadingPaginated status={status}>
-                {results?.map(({ _id, text, votes, votedByUser }) => {
+                {results?.map(({ _id, text, votes, votedByUser, nome_usuario }) => {
                     return (
                         <div key={_id} className="flex p-2 gap-2 ">
                             {text},

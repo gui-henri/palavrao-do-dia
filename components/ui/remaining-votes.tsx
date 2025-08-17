@@ -6,13 +6,16 @@ import { useQuery } from "convex/react"
 export function RemainingVotes() {
     const remainingVotes = useQuery(api.votos.remainingVotes);
 
-    if (remainingVotes === "NotLoggedIn" || remainingVotes === undefined) {
-        return (
-            <p>Faça login para poder votar.</p>
-        )
+    let str = `Restam ${remainingVotes} votos.`;
+
+    if (remainingVotes === "NotLoggedIn") {
+        str = "Faça login para poder votar";
     }
 
-    let str = `Restam ${remainingVotes} votos.`;
+    if (remainingVotes === undefined) {
+        str = "";
+    }
+
 
     if (remainingVotes === 0) {
         str = "Não restou nada para o betinha.";
@@ -23,6 +26,6 @@ export function RemainingVotes() {
     }
 
     return (
-        <p>{str}</p>
+        <p className="mr-2">{str}</p>
     )
 }
