@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import { ConvexError } from "convex/values";
 import { LoadingCussWords } from "./loading-cusswords";
 import React, { useEffect } from "react";
+import { Card, CardAction, CardDescription, CardHeader, CardTitle } from "./card";
 
 export function CussWordsList() {
     const { results, status, loadMore } = usePaginatedQuery(
@@ -16,24 +17,31 @@ export function CussWordsList() {
     const sendLike = useMutation(api.palavrao.voteUp);
 
     return (
-        <div>
+        <div className="flex flex-col gap-3">
             <LoadingPaginated status={status}>
                 {results?.map(({ _id, text, votes, votedByUser, nome_usuario }) => {
                     return (
-                        <div key={_id} className="flex p-2 gap-2 ">
-                            {text},
-                            <button className="flex gap-1 cursor-pointer" onClick={async () => {
-                                try {
-                                    await sendLike({ palavrao: _id })
-                                } catch (error) {
-                                    if (error instanceof ConvexError) {
-                                        toast.error(error.data);
-                                    }
-                                }
-                            }}>
-                                <ThumbsUp fill={votedByUser ? "white" : ""} /> {votes}
-                            </button>
-                        </div>
+                        <Card key={_id} className="w-128">
+                            <CardHeader>
+                                <CardTitle>{text}</CardTitle>
+                                <CardDescription>
+                                    Sugerido por {nome_usuario}
+                                </CardDescription>
+                                <CardAction>
+                                    <button className="flex gap-1 cursor-pointer" onClick={async () => {
+                                        try {
+                                            await sendLike({ palavrao: _id })
+                                        } catch (error) {
+                                            if (error instanceof ConvexError) {
+                                                toast.error(error.data);
+                                            }
+                                        }
+                                    }}>
+                                        <ThumbsUp fill={votedByUser ? "white" : ""} /> {votes}
+                                    </button>
+                                </CardAction>
+                            </CardHeader>
+                        </Card>
                     )
                 })}
             </LoadingPaginated>
