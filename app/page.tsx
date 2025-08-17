@@ -8,8 +8,8 @@ export default function Home() {
     <div className="p-4 gap-3 flex flex-col items-center">
       <CussWordOfTheDay />
       <SendForm />
-      <BottomIndicator />
       <CussWordsList />
+      <BottomIndicator />
     </div>
   );
 }

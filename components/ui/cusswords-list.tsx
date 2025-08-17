@@ -17,7 +17,8 @@ export function CussWordsList() {
     const sendLike = useMutation(api.palavrao.voteUp);
 
     return (
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-3 mt-6">
+            <p>Vote no próximo palavrão do dia!</p>
             <LoadingPaginated status={status}>
                 {results?.map(({ _id, text, votes, votedByUser, nome_usuario }) => {
                     return (
