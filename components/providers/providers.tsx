@@ -6,7 +6,7 @@ import { shadcn } from '@clerk/themes'
 
 export default function Providers({ children }: { children: ReactNode }) {
     return (
-        <ClerkProvider appearance={{ theme: shadcn }}>
+        <ClerkProvider appearance={{ theme: shadcn }} publishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}>
             <ConvexClientProvider>
                 <ThemeProvider
                     attribute="class"
