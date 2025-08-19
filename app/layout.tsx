@@ -6,7 +6,8 @@ import { Toaster } from "@/components/ui/sonner";
 
 const cerdavileCursive = Lacquer({
   variable: "--font-cercavile-cursive",
-  weight: "400"
+  weight: "400",
+  subsets: ["latin"]
 });
 
 export const metadata: Metadata = {
