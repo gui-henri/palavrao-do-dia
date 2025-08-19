@@ -1,17 +1,12 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Lacquer } from "next/font/google";
 import "./globals.css";
 import Providers from "@/components/providers/providers";
 import { Toaster } from "@/components/ui/sonner";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+const cerdavileCursive = Lacquer({
+  variable: "--font-cercavile-cursive",
+  weight: "400"
 });
 
 export const metadata: Metadata = {
@@ -28,7 +23,7 @@ export default function RootLayout({
     <html lang="pt-br" suppressHydrationWarning
     >
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${cerdavileCursive.className} antialiased bg-amber-50 bg-[image:linear-gradient(to_right,transparent_9%,#e63946_9%,#e63946_10%,transparent_10%),repeating-linear-gradient(#fefae0,#fefae0_29px,#a8dadc_30px,#a8dadc_31px)]`}
       >
         <Providers>
           {children}
