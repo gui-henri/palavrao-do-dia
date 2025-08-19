@@ -9,6 +9,12 @@ import { LoadingCussWords } from "./loading-cusswords";
 import React, { useEffect } from "react";
 import { Card, CardAction, CardDescription, CardHeader, CardTitle } from "./card";
 
+function getRandomInteger(min: number, max: number) {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
 export function CussWordsList() {
     const { results, status, loadMore } = usePaginatedQuery(
         api.palavrao.list,
@@ -21,11 +27,17 @@ export function CussWordsList() {
             <p>Vote no próximo palavrão do dia!</p>
             <LoadingPaginated status={status}>
                 {results?.map(({ _id, text, votes, votedByUser, nome_usuario }) => {
+
+                    const colors = ["bg-red-300", "bg-lime-300", "bg-blue-300", "bg-amber-300", "bg-violet-300", "bg-fuchsia-300"]
+                    const randomColor = getRandomInteger(0, colors.length - 1);
+                    const rotations = ["-rotate-1", "rotate-1"];
+                    const randomRotation = getRandomInteger(0, 1);
+
                     return (
-                        <Card key={_id} className="w-128">
+                        <Card key={_id} className={`w-128 rounded-none ${rotations[randomRotation]} ${colors[randomColor]}`}>
                             <CardHeader>
-                                <CardTitle>{text}</CardTitle>
-                                <CardDescription>
+                                <CardTitle className="">{text}</CardTitle>
+                                <CardDescription className="text-black">
                                     Sugerido por {nome_usuario}
                                 </CardDescription>
                                 <CardAction>
@@ -38,7 +50,7 @@ export function CussWordsList() {
                                             }
                                         }
                                     }}>
-                                        <ThumbsUp fill={votedByUser ? "white" : ""} /> {votes}
+                                        <ThumbsUp fill={votedByUser ? "white" : "black"} /> {votes}
                                     </button>
                                 </CardAction>
                             </CardHeader>
@@ -46,7 +58,7 @@ export function CussWordsList() {
                     )
                 })}
             </LoadingPaginated>
-            <Button className="cursor-pointer" onClick={() => loadMore(20)} disabled={status !== "CanLoadMore"}>Carregar Mais</Button>
+            <Button className="cursor-pointer w-128" onClick={() => loadMore(20)} disabled={status !== "CanLoadMore"}>Carregar Mais</Button>
         </div >
     )
 }

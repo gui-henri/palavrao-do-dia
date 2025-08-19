@@ -7,6 +7,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { Input } from "./input";
 import { Button } from "./button";
+import { SendHorizonal, SendIcon } from "lucide-react";
 
 export function SendForm() {
     const sendSuggestion = useMutation(api.palavrao.send);
@@ -27,8 +28,8 @@ export function SendForm() {
             }}
                 className="flex gap-2 w-128"
             >
-                <Input placeholder="Sugira seu palavão do dia. (Ex: Supunhetamos)" value={palavrao} onChange={(e) => setPalavrao(e.target.value)}></Input>
-                <Button className="cursor-pointer">Enviar</Button>
+                <Input className="bg-slate-50 border-2 border-black" placeholder="Sugira seu palavão do dia. (Ex: Supunhetamos)" value={palavrao} onChange={(e) => setPalavrao(e.target.value)}></Input>
+                <Button size={"icon"} className="cursor-pointer bg-blue-600"><SendHorizonal /></Button>
             </form>
         </>
     )
