@@ -27,7 +27,7 @@ export function SendForm() {
             }}
                 className="flex gap-2 w-128"
             >
-                <Input placeholder="Sugira seu palavão do dia. (Apenas uma vez por dia)" value={palavrao} onChange={(e) => setPalavrao(e.target.value)}></Input>
+                <Input placeholder="Sugira seu palavão do dia. (Ex: Supunhetamos)" value={palavrao} onChange={(e) => setPalavrao(e.target.value)}></Input>
                 <Button className="cursor-pointer">Enviar</Button>
             </form>
         </>
