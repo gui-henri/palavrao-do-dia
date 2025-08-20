@@ -26,7 +26,7 @@ export function SendForm() {
                 }
                 setPalavrao("");
             }}
-                className="flex gap-2 w-128"
+                className="flex gap-2 w-full max-w-128"
             >
                 <Input className="bg-slate-50 border-2 border-black" placeholder="Sugira seu palavão do dia. (Ex: Supunhetamos)" value={palavrao} onChange={(e) => setPalavrao(e.target.value)}></Input>
                 <Button size={"icon"} className="cursor-pointer bg-blue-600"><SendHorizonal /></Button>

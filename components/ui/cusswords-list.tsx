@@ -23,7 +23,7 @@ export function CussWordsList() {
     const sendLike = useMutation(api.palavrao.voteUp);
 
     return (
-        <div className="flex flex-col gap-3 mt-6">
+        <div className="w-full max-w-128 flex flex-col gap-3 mt-6">
             <p>Vote no próximo palavrão do dia!</p>
             <LoadingPaginated status={status}>
                 {results?.map(({ _id, text, votes, votedByUser, nome_usuario }) => {
@@ -34,7 +34,7 @@ export function CussWordsList() {
                     const randomRotation = getRandomInteger(0, 1);
 
                     return (
-                        <Card key={_id} className={`w-128 rounded-none ${rotations[randomRotation]} ${colors[randomColor]}`}>
+                        <Card key={_id} className={` rounded-none ${rotations[randomRotation]} ${colors[randomColor]}`}>
                             <CardHeader>
                                 <CardTitle className="">{text}</CardTitle>
                                 <CardDescription className="text-black">
@@ -58,7 +58,7 @@ export function CussWordsList() {
                     )
                 })}
             </LoadingPaginated>
-            <Button className="cursor-pointer w-128" onClick={() => loadMore(20)} disabled={status !== "CanLoadMore"}>Carregar Mais</Button>
+            <Button className="cursor-pointer w-full max-w-128" onClick={() => loadMore(20)} disabled={status !== "CanLoadMore"}>Carregar Mais</Button>
         </div >
     )
 }
