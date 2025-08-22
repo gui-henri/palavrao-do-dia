@@ -27,7 +27,9 @@ export default function RootLayout({
         className={`${cerdavileCursive.className} antialiased bg-amber-50 bg-[image:linear-gradient(to_right,transparent_9%,#e63946_9%,#e63946_10%,transparent_10%),repeating-linear-gradient(#fefae0,#fefae0_29px,#a8dadc_30px,#a8dadc_31px)]`}
       >
         <Providers>
-          {children}
+          <div className="p-4 gap-3 flex flex-col items-center">
+            {children}
+          </div>
         </Providers>
         <Toaster />
       </body>

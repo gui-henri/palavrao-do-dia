@@ -1,3 +1,4 @@
+import PageTitle from "@/components/ui/page-title";
 import Link from "next/link";
 
 export default function PrivacyPage() {
@@ -5,7 +6,7 @@ export default function PrivacyPage() {
         <div className="p-4 gap-3 flex flex-col items-center w-full text-center">
             <div className="max-w-128">
                 <Link href="/" className="underline p-2">Voltar para página inicial</Link>
-                <h1 id="pol-tica-de-privacidade" className="text-4xl">Política de Privacidade</h1>
+                <PageTitle>Política de Privacidade</PageTitle>
                 <p>Última atualização: 20 de agosto de 2025</p>
                 <p className="p-4">Esta Política de Privacidade explica como o Palavrão do Dia (“nós”, “nosso”) coleta, usa e protege suas informações pessoais quando você utiliza nosso aplicativo.</p>
                 <p className="p-4">Ao usar o Palavrão do Dia, você concorda com a coleta e o uso de informações de acordo com esta política.</p>

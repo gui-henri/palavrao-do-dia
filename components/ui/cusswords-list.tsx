@@ -18,7 +18,7 @@ function getRandomInteger(min: number, max: number) {
 export function CussWordsList() {
     const { results, status, loadMore } = usePaginatedQuery(
         api.palavrao.list,
-        {},
+        { searchDate: "today" },
         { initialNumItems: 20 });
     const sendLike = useMutation(api.palavrao.voteUp);
 

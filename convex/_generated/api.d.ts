@@ -14,6 +14,7 @@ import type {
   FunctionReference,
 } from "convex/server";
 import type * as consts from "../consts.js";
+import type * as days from "../days.js";
 import type * as entity_day from "../entity/day.js";
 import type * as palavrao from "../palavrao.js";
 import type * as votos from "../votos.js";
@@ -28,6 +29,7 @@ import type * as votos from "../votos.js";
  */
 declare const fullApi: ApiFromModules<{
   consts: typeof consts;
+  days: typeof days;
   "entity/day": typeof entity_day;
   palavrao: typeof palavrao;
   votos: typeof votos;

@@ -18,5 +18,8 @@ export default defineSchema({
         usuario: v.string(),
         dia: v.string(),
     }).index("by_user", ["usuario"])
-        .index("by_day_and_user", ["dia", "usuario"])
+        .index("by_day_and_user", ["dia", "usuario"]),
+    dias: defineTable({
+        dia: v.string()
+    }).index("by_day", ["dia"])
 });
