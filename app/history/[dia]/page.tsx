@@ -4,7 +4,11 @@ import { api } from "@/convex/_generated/api";
 import { fetchQuery } from "convex/nextjs";
 import Link from "next/link";
 
-export default async function HistoryPage({ params }: { params: { dia: string } }) {
+type HistoryPageProps = {
+    params: { dia: string };
+};
+
+export default async function HistoryPage({ params }: HistoryPageProps) {
     const dia = params.dia;
 
     const data = new Date(dia);

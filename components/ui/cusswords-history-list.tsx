@@ -1,20 +1,13 @@
 "use client"
 
 import { Id } from "@/convex/_generated/dataModel";
-import { Cursor, PaginationResult } from "convex/server";
-import { ArrowRightFromLineIcon, ThumbsUp } from "lucide-react";
+import { Cursor } from "convex/server";
+import { ThumbsUp } from "lucide-react";
 import { useState } from "react";
 import { Card, CardHeader, CardTitle, CardAction, CardDescription } from "./card";
 import { Button } from "./button";
 import { api } from "@/convex/_generated/api";
 import { useConvex } from "convex/react";
-import { useRouter } from "next/navigation";
-
-function getRandomInteger(min: number, max: number) {
-    min = Math.ceil(min);
-    max = Math.floor(max);
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-}
 
 function getHashFromString(str: string): number {
     let hash = 0;
@@ -82,15 +75,6 @@ export function CussWordsHistoryList({ pages, dia }: CussWordsHistoryListProps) 
                 const randomColor = seededGetRandomInteger(palavrao._id, 0, colors.length - 1);
                 const rotations = ["-rotate-1", "rotate-1"];
                 const randomRotation = seededGetRandomInteger(palavrao._id, 0, colors.length - 1);
-
-                const data = new Date(palavrao.dia);
-                const opcoes = {
-                    day: '2-digit',
-                    month: '2-digit',
-                    year: 'numeric'
-                } as const;
-
-                const dataFormatada = new Intl.DateTimeFormat('pt-BR', opcoes).format(data);
 
                 return (
                     <Card key={palavrao._id} className={`rounded-none ${rotations[randomRotation]} ${colors[randomColor]}`}>
