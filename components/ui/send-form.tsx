@@ -7,7 +7,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { Input } from "./input";
 import { Button } from "./button";
-import { SendHorizonal, SendIcon } from "lucide-react";
+import { SendHorizonal } from "lucide-react";
 
 export function SendForm() {
     const sendSuggestion = useMutation(api.palavrao.send);

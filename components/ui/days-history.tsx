@@ -10,12 +10,6 @@ import { api } from "@/convex/_generated/api";
 import { useConvex } from "convex/react";
 import { useRouter } from "next/navigation";
 
-function getRandomInteger(min: number, max: number) {
-    min = Math.ceil(min);
-    max = Math.floor(max);
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-}
-
 function getHashFromString(str: string): number {
     let hash = 0;
     for (let i = 0; i < str.length; i++) {
