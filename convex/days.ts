@@ -10,6 +10,6 @@ export const getVotationDays = query({
             args.paginationOpts.numItems = 20;
         }
 
-        return await ctx.db.query("dias").paginate(args.paginationOpts);
+        return await ctx.db.query("dias").order("desc").paginate(args.paginationOpts);
     }
 })
