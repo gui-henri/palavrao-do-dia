@@ -5,11 +5,11 @@ import { fetchQuery } from "convex/nextjs";
 import Link from "next/link";
 
 type HistoryPageProps = {
-    params: { dia: string };
+    params: Promise<{ dia: string }>;
 };
 
 export default async function HistoryPage({ params }: HistoryPageProps) {
-    const dia = params.dia;
+    const { dia } = await params;
 
     const data = new Date(dia);
     const opcoes = {
